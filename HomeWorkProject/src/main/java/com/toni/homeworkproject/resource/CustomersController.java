@@ -9,17 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@CrossOrigin(
-        origins = {
-                "http://localhost:3000"
-        },
-        methods = {
-                RequestMethod.OPTIONS,
-                RequestMethod.GET,
-                RequestMethod.PUT,
-                RequestMethod.DELETE,
-                RequestMethod.POST
-        })
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 @RestController
 @RequestMapping("/customers")
 public class CustomersController {
@@ -49,14 +39,15 @@ public class CustomersController {
     public ResponseEntity<?> createAccount(@PathVariable(name = "id") Long id, @RequestBody Currency currency){
         Optional<Customer> customer = customerService.findById(id);
         if (customer.isPresent()){
-            customer.get().getAccounts().add(accountService.create(new Account(currency,customer.get().getId())));
-            return ResponseEntity.status(201).build();
+            Account newAcc = accountService.create(new Account(currency,customer.get().getId()));
+            customer.get().getAccounts().add(newAcc);
+            return ResponseEntity.status(201).body(newAcc);
         } else {
             return ResponseEntity.status(404).body("No such customer with this ID");
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping
     public ResponseEntity<?> update(@RequestBody Customer customer){
         return ResponseEntity.ok().body(customerService.update(customer));
     }
