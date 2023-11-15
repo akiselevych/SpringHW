@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(origins = "https://client-for-java.vercel.app", allowCredentials = "true")
 @RestController
 @RequestMapping("/customers")
 public class CustomersController {

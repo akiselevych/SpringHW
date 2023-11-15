@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @CrossOrigin(
         origins = {
-                "http://localhost:3000"
+                "https://client-for-java.vercel.app"
         },
         methods = {
                 RequestMethod.OPTIONS,
