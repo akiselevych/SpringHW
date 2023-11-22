@@ -39,8 +39,7 @@ public class CustomersController {
     public ResponseEntity<?> createAccount(@PathVariable(name = "id") Long id, @RequestBody Currency currency){
         Optional<Customer> customer = customerService.findById(id);
         if (customer.isPresent()){
-            Account newAcc = accountService.create(new Account(currency,customer.get().getId()));
-            customer.get().getAccounts().add(newAcc);
+            Account newAcc = accountService.create(new Account(currency,customer.get()));
             return ResponseEntity.status(201).body(newAcc);
         } else {
             return ResponseEntity.status(404).body("No such customer with this ID");

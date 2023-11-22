@@ -30,11 +30,10 @@ public class AccountsController {
         this.accountService = accountService;
     }
 
-    @PostMapping("/replenish")
-    public ResponseEntity<?> replenishAccount(@RequestBody Map<String,String> data) {
-        BigDecimal sum = new BigDecimal(data.get("sum"));
-        List<Account> accounts = accountService.findAll();
-        Optional<Account> accountOptional = accounts.stream().filter(acc -> acc.getAccountNumber().equals(data.get("accNum"))).findAny();
+    @PostMapping("/replenish/{accountNumber}/{sum}")
+    public ResponseEntity<?> replenishAccount(@PathVariable(name = "accountNumber") String accountNumber, @PathVariable(name = "sum") BigDecimal sum) {
+        Optional<Account> accountOptional = accountService.findAll().stream()
+                .filter(acc -> acc.getAccountNumber().equals(accountNumber)).findAny();
         if (sum.compareTo(BigDecimal.valueOf(0)) < 0) {
             return ResponseEntity.badRequest().body("Sum must be more than 0");
         }
@@ -47,11 +46,11 @@ public class AccountsController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/withdraw")
-    public ResponseEntity<?> withdrawAccount(@RequestBody Map<String,String> data) {
-        BigDecimal sum = new BigDecimal(data.get("sum"));
-        List<Account> accounts = accountService.findAll();
-        Optional<Account> accountOptional = accounts.stream().filter(acc -> acc.getAccountNumber().equals(data.get("accNum"))).findAny();
+    @PostMapping("/withdraw/{accountNumber}/{sum}")
+    public ResponseEntity<?> withdrawAccount(@PathVariable(name = "accountNumber") String accountNumber,
+                                             @PathVariable(name = "sum") BigDecimal sum) {
+        Optional<Account> accountOptional = accountService.findAll().stream()
+                .filter(acc -> acc.getAccountNumber().equals(accountNumber)).findAny();
         if (sum.compareTo(BigDecimal.valueOf(0)) < 0) {
             return ResponseEntity.badRequest().body("Sum must be more than 0");
         }
@@ -67,12 +66,13 @@ public class AccountsController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/send")
-    public ResponseEntity<?> sendToAnotherAccount(@RequestBody Map<String, String> data) {
-        BigDecimal sum = new BigDecimal(data.get("sum"));
+    @PostMapping("/send/{senderAccNo}/{receiverAccNo}/{sum}")
+    public ResponseEntity<?> sendToAnotherAccount(@PathVariable(name = "senderAccNo") String senderAccNumber,
+                                                  @PathVariable(name = "receiverAccNo") String receiverAccNumber,
+                                                  @PathVariable(name = "sum") BigDecimal sum) {
         List<Account> accounts = accountService.findAll();
-        Optional<Account> senderOptional = accounts.stream().filter(acc -> acc.getAccountNumber().equals(data.get("senderAccNum"))).findAny();
-        Optional<Account> receiverOptional = accounts.stream().filter(acc -> acc.getAccountNumber().equals(data.get("receiverAccNum"))).findAny();
+        Optional<Account> senderOptional = accounts.stream().filter(acc -> acc.getAccountNumber().equals(senderAccNumber)).findAny();
+        Optional<Account> receiverOptional = accounts.stream().filter(acc -> acc.getAccountNumber().equals(receiverAccNumber)).findAny();
         if (sum.compareTo(BigDecimal.valueOf(0)) < 0) {
             return ResponseEntity.badRequest().body("Sum must be more than 0");
         }

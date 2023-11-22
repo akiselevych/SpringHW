@@ -27,6 +27,7 @@ public class InMemoAccountService implements DefaultService<Account> {
 
     @Override
     public Account create(Account obj) {
+        obj.getCustomer().getAccounts().add(obj);
         return accountDao.create(obj);
     }
 

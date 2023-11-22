@@ -1,5 +1,7 @@
 package com.toni.homeworkproject.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -9,17 +11,17 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@ToString
 public class Account {
     private Long id;
     private String accountNumber;
     private Currency currency;
     private BigDecimal balance;
-    private Long customerId;
+    @JsonBackReference
+    private Customer customer;
 
-    public Account(Currency currency, Long customerId) {
+    public Account(Currency currency, Customer customer) {
         this.currency = currency;
-        this.customerId = customerId;
+        this.customer = customer;
         this.accountNumber = UUID.randomUUID().toString();
         this.balance = new BigDecimal(0);
     }
@@ -37,5 +39,16 @@ public class Account {
     @Override
     public int hashCode() {
         return id.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", accountNumber='" + accountNumber + '\'' +
+                ", currency=" + currency +
+                ", balance=" + balance +
+                ", customerID=" + customer.getId() +
+                '}';
     }
 }

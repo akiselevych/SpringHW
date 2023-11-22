@@ -1,5 +1,6 @@
 package com.toni.homeworkproject.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -16,6 +17,7 @@ public class Customer {
     private String surname;
     private String email;
     private Integer age;
+    @JsonManagedReference
     private List<Account> accounts;
 
     public Customer(String name, String surname, String email, Integer age) {
