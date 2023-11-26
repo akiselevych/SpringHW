@@ -12,6 +12,8 @@ import java.util.Set;
 @Table(name = "employers")
 @Getter
 @Setter
+@NamedEntityGraph(name = "employersWithCustomers",
+        attributeNodes = {@NamedAttributeNode("customers")})
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString

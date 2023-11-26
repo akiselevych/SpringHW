@@ -80,8 +80,7 @@ public class InMemoCustomerDao implements DefaultDao<Customer> {
             transaction.begin();
             entityManager.merge(obj);
             transaction.commit();
-            entityManager.refresh(obj);
-            return obj;
+            return findById(obj.getId()).get();
         } catch (HibernateException e){
             if (transaction != null){
                 transaction.rollback();

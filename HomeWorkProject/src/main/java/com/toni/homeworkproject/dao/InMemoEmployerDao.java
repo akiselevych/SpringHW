@@ -2,6 +2,7 @@ package com.toni.homeworkproject.dao;
 
 import com.toni.homeworkproject.domain.Customer;
 import com.toni.homeworkproject.domain.Employer;
+import jakarta.persistence.EntityGraph;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
@@ -9,9 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
@@ -23,14 +22,19 @@ public class InMemoEmployerDao implements DefaultDao<Employer> {
     @Override
     public List<Employer> findAll() {
         try (EntityManager entityManager = emf.createEntityManager()) {
-            return entityManager.createQuery("select a from Employer a", Employer.class).getResultList();
+            EntityGraph<?> graph = entityManager.getEntityGraph("employersWithCustomers");
+            return entityManager.createQuery("select a from Employer a", Employer.class)
+                    .setHint("jakarta.persistence.fetchgraph",graph).getResultList();
         }
     }
 
     @Override
     public Optional<Employer> findById(Long id) {
         try (EntityManager entityManager = emf.createEntityManager()) {
-            return Optional.ofNullable(entityManager.find(Employer.class, id));
+            EntityGraph<?> graph = entityManager.getEntityGraph("employersWithCustomers");
+            Map<String, Object> props = new HashMap<>();
+            props.put("jakarta.persistence.fetchgraph", graph);
+            return Optional.ofNullable(entityManager.find(Employer.class, id,props));
         }
     }
 
@@ -76,7 +80,6 @@ public class InMemoEmployerDao implements DefaultDao<Employer> {
             transaction.begin();
             entityManager.merge(obj);
             transaction.commit();
-            entityManager.refresh(obj);
             return obj;
         } catch (HibernateException e){
             if (transaction != null){
