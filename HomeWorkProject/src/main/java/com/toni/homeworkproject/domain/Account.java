@@ -2,21 +2,30 @@ package com.toni.homeworkproject.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
+@Entity
+@Table(name = "accounts")
 @Getter
 @Setter
-public class Account {
-    private Long id;
+@NoArgsConstructor
+@ToString(exclude = "customer")
+@EqualsAndHashCode(of = "id", callSuper = true)
+public class Account extends AbstractEntity {
+    @Column(name = "account_number")
     private String accountNumber;
+    @Column(name = "currency")
+    @Enumerated(EnumType.STRING)
     private Currency currency;
+    @Column(name = "balance")
     private BigDecimal balance;
+
     @JsonBackReference
+    @ManyToOne
     private Customer customer;
 
     public Account(Currency currency, Customer customer) {
@@ -26,29 +35,4 @@ public class Account {
         this.balance = new BigDecimal(0);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Account account = (Account) o;
-
-        return id.equals(account.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "Account{" +
-                "id=" + id +
-                ", accountNumber='" + accountNumber + '\'' +
-                ", currency=" + currency +
-                ", balance=" + balance +
-                ", customerID=" + customer.getId() +
-                '}';
-    }
 }

@@ -1,6 +1,11 @@
 package com.toni.homeworkproject.dao;
 
 import com.toni.homeworkproject.domain.Account;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+import lombok.RequiredArgsConstructor;
+import org.hibernate.HibernateException;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -9,61 +14,121 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
+@RequiredArgsConstructor
 public class InMemoAccountDao implements DefaultDao<Account> {
-    private final static AtomicLong id = new AtomicLong(1);
-    private final List<Account> accounts = new ArrayList<>();
+    private final EntityManagerFactory emf;
 
     @Override
     public List<Account> findAll() {
-        return this.accounts;
+        try(EntityManager entityManager = emf.createEntityManager()){
+            return entityManager.createQuery("select a from Account a", Account.class).getResultList();
+        }
     }
 
     @Override
     public Optional<Account> findById(Long id) {
-        return accounts.stream().filter(acc -> acc.getId().equals(id)).findAny();
+        try(EntityManager entityManager = emf.createEntityManager()){
+            return Optional.ofNullable(entityManager.find(Account.class,id));
+        }
     }
 
     @Override
     public Account create(Account obj) {
-        obj.setId(id.getAndIncrement());
-        accounts.add(obj);
-        return obj;
+        EntityTransaction transaction = null;
+        try (EntityManager entityManager = emf.createEntityManager()) {
+            transaction = entityManager.getTransaction();
+            transaction.begin();
+            entityManager.persist(obj);
+            transaction.commit();
+            entityManager.refresh(obj);
+            return obj;
+        } catch (HibernateException e){
+            if (transaction != null){
+                transaction.rollback();
+            }
+            return null;
+        }
     }
 
     @Override
     public void createAll(List<Account> entities) {
-        entities.forEach(acc -> {
-            acc.setId(id.getAndIncrement());
-            accounts.add(acc);
-        });
+        EntityTransaction transaction = null;
+        try (EntityManager entityManager = emf.createEntityManager()) {
+            transaction = entityManager.getTransaction();
+            transaction.begin();
+            entityManager.persist(entities);
+            transaction.commit();
+            entityManager.refresh(entities);
+        } catch (HibernateException e){
+            if (transaction != null){
+                transaction.rollback();
+            }
+        }
     }
 
     @Override
     public Account update(Account obj) {
-        accounts.stream()
-                .filter(acc -> acc.getId().equals(obj.getId()))
-                .forEach(acc -> acc = obj);
-
-        return obj;
+        EntityTransaction transaction = null;
+        try (EntityManager entityManager = emf.createEntityManager()) {
+            transaction = entityManager.getTransaction();
+            transaction.begin();
+            entityManager.merge(obj);
+            transaction.commit();
+            return obj;
+        } catch (HibernateException e){
+            if (transaction != null){
+                transaction.rollback();
+            }
+            return null;
+        }
     }
 
     @Override
     public boolean delete(Long id) {
-        Optional<Account> account = findById(id);
-        if (account.isPresent()){
-            accounts.remove(account.get());
+        EntityTransaction transaction = null;
+        try (EntityManager entityManager = emf.createEntityManager()) {
+            transaction = entityManager.getTransaction();
+            transaction.begin();
+            entityManager.remove(entityManager.find(Account.class, id));
+            transaction.commit();
             return true;
+        } catch (HibernateException e){
+            if (transaction != null){
+                transaction.rollback();
+            }
+            return false;
         }
-        return false;
     }
 
     @Override
     public boolean delete(Account obj) {
-        return accounts.remove(obj);
+        EntityTransaction transaction = null;
+        try (EntityManager entityManager = emf.createEntityManager()) {
+            transaction = entityManager.getTransaction();
+            transaction.begin();
+            entityManager.remove(obj);
+            transaction.commit();
+            return true;
+        } catch (HibernateException e){
+            if (transaction != null){
+                transaction.rollback();
+            }
+            return false;
+        }
     }
 
     @Override
     public void deleteAll(List<Account> entities) {
-        entities.forEach(accounts::remove);
+        EntityTransaction transaction = null;
+        try (EntityManager entityManager = emf.createEntityManager()) {
+            transaction = entityManager.getTransaction();
+            transaction.begin();
+            entityManager.remove(entities);
+            transaction.commit();
+        } catch (HibernateException e){
+            if (transaction != null){
+                transaction.rollback();
+            }
+        }
     }
 }

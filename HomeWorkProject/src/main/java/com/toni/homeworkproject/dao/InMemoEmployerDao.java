@@ -1,9 +1,7 @@
 package com.toni.homeworkproject.dao;
 
-
-import com.toni.homeworkproject.domain.Account;
 import com.toni.homeworkproject.domain.Customer;
-import jakarta.persistence.EntityGraph;
+import com.toni.homeworkproject.domain.Employer;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
@@ -11,35 +9,33 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 @RequiredArgsConstructor
-public class InMemoCustomerDao implements DefaultDao<Customer> {
+public class InMemoEmployerDao implements DefaultDao<Employer> {
+
     private final EntityManagerFactory emf;
 
     @Override
-    public List<Customer> findAll() {
-        try(EntityManager entityManager = emf.createEntityManager()){
-            EntityGraph<?> withAccounts = entityManager.getEntityGraph("customerWithAccountsAndEmployers");
-            return entityManager.createQuery("select a from Customer a", Customer.class)
-                    .setHint("jakarta.persistence.fetchgraph",withAccounts).getResultList();
+    public List<Employer> findAll() {
+        try (EntityManager entityManager = emf.createEntityManager()) {
+            return entityManager.createQuery("select a from Employer a", Employer.class).getResultList();
         }
     }
 
     @Override
-    public Optional<Customer> findById(Long id) {
-        try(EntityManager entityManager = emf.createEntityManager()){
-            EntityGraph<?> graph = entityManager.getEntityGraph("customerWithAccountsAndEmployers");
-            Map<String, Object> props = new HashMap<>();
-            props.put("jakarta.persistence.fetchgraph", graph);
-            return Optional.ofNullable(entityManager.find(Customer.class,id,props));
+    public Optional<Employer> findById(Long id) {
+        try (EntityManager entityManager = emf.createEntityManager()) {
+            return Optional.ofNullable(entityManager.find(Employer.class, id));
         }
     }
 
     @Override
-    public Customer create(Customer obj) {
+    public Employer create(Employer obj) {
         EntityTransaction transaction = null;
         try(EntityManager entityManager = emf.createEntityManager()){
             transaction = entityManager.getTransaction();
@@ -47,7 +43,7 @@ public class InMemoCustomerDao implements DefaultDao<Customer> {
             entityManager.persist(obj);
             transaction.commit();
             entityManager.refresh(obj);
-            return findById(obj.getId()).get();
+            return obj;
         } catch (HibernateException e){
             if (transaction != null){
                 transaction.rollback();
@@ -57,7 +53,7 @@ public class InMemoCustomerDao implements DefaultDao<Customer> {
     }
 
     @Override
-    public void createAll(List<Customer> entities) {
+    public void createAll(List<Employer> entities) {
         EntityTransaction transaction = null;
         try(EntityManager entityManager = emf.createEntityManager()){
             transaction = entityManager.getTransaction();
@@ -73,7 +69,7 @@ public class InMemoCustomerDao implements DefaultDao<Customer> {
     }
 
     @Override
-    public Customer update(Customer obj) {
+    public Employer update(Employer obj) {
         EntityTransaction transaction = null;
         try(EntityManager entityManager = emf.createEntityManager()){
             transaction = entityManager.getTransaction();
@@ -108,7 +104,7 @@ public class InMemoCustomerDao implements DefaultDao<Customer> {
     }
 
     @Override
-    public boolean delete(Customer obj) {
+    public boolean delete(Employer obj) {
         EntityTransaction transaction = null;
         try(EntityManager entityManager = emf.createEntityManager()){
             transaction = entityManager.getTransaction();
@@ -125,7 +121,7 @@ public class InMemoCustomerDao implements DefaultDao<Customer> {
     }
 
     @Override
-    public void deleteAll(List<Customer> entities) {
+    public void deleteAll(List<Employer> entities) {
         EntityTransaction transaction = null;
         try(EntityManager entityManager = emf.createEntityManager()){
             transaction = entityManager.getTransaction();

@@ -2,18 +2,16 @@ package com.toni.homeworkproject.service;
 
 import com.toni.homeworkproject.dao.DefaultDao;
 import com.toni.homeworkproject.domain.Customer;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class InMemoCustomerService implements DefaultService<Customer> {
     private final DefaultDao<Customer> customerDao;
-
-    public InMemoCustomerService(DefaultDao<Customer> customerDao) {
-        this.customerDao = customerDao;
-    }
 
     @Override
     public List<Customer> findAll() {

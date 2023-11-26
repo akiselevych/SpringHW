@@ -1,4 +1,5 @@
 package com.toni.homeworkproject.service;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.toni.homeworkproject.dao.DefaultDao;
 import com.toni.homeworkproject.domain.Account;
@@ -7,12 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class InMemoAccountService implements DefaultService<Account> {
     private final DefaultDao<Account> accountDao;
-
-    public InMemoAccountService(DefaultDao<Account> accountDao) {
-        this.accountDao = accountDao;
-    }
 
     @Override
     public List<Account> findAll() {
@@ -27,7 +25,6 @@ public class InMemoAccountService implements DefaultService<Account> {
 
     @Override
     public Account create(Account obj) {
-        obj.getCustomer().getAccounts().add(obj);
         return accountDao.create(obj);
     }
 

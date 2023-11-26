@@ -86,6 +86,8 @@ public class AccountsController {
         }
         sender.setBalance(sender.getBalance().subtract(sum));
         receiver.setBalance(receiver.getBalance().add(sum));
+        accountService.update(sender);
+        accountService.update(receiver);
         return ResponseEntity.ok().build();
     }
 }
