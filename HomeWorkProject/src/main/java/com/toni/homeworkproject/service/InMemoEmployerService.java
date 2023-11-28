@@ -1,9 +1,11 @@
 package com.toni.homeworkproject.service;
 
-import com.toni.homeworkproject.dao.DefaultDao;
+import com.toni.homeworkproject.dao.EmployerJpaRepository;
+import com.toni.homeworkproject.domain.Account;
 import com.toni.homeworkproject.domain.Employer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,47 +13,51 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class InMemoEmployerService implements DefaultService<Employer> {
-    private final DefaultDao<Employer> employerDao;
+    private final EmployerJpaRepository employerRepository;
 
-
+    @Transactional(readOnly = true)
     @Override
     public List<Employer> findAll() {
-        return employerDao.findAll();
+        return employerRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<Employer> findById(Long id) {
-        return employerDao.findById(id);
+        return employerRepository.findById(id);
     }
-
-
+    @Transactional
     @Override
     public Employer create(Employer obj) {
-        return employerDao.create(obj);
+        return employerRepository.save(obj);
     }
-
+    @Transactional
     @Override
     public void createAll(List<Employer> entities) {
-        employerDao.createAll(entities);
+        employerRepository.saveAll(entities);
     }
 
+    @Transactional
     @Override
     public Employer update(Employer obj) {
-        return employerDao.update(obj);
+        return employerRepository.save(obj);
     }
 
+    @Transactional
     @Override
-    public boolean delete(Long id) {
-        return employerDao.delete(id);
+    public void delete(Long id) {
+        employerRepository.deleteById(id);
     }
 
+    @Transactional
     @Override
-    public boolean delete(Employer obj) {
-        return employerDao.delete(obj);
+    public void delete(Employer obj) {
+        employerRepository.delete(obj);
     }
 
+    @Transactional
     @Override
     public void deleteAll(List<Employer> entities) {
-        employerDao.deleteAll(entities);
+        employerRepository.deleteAll(entities);
     }
 }

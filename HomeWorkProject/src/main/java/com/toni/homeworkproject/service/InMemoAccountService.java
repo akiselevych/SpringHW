@@ -1,8 +1,10 @@
 package com.toni.homeworkproject.service;
+import com.toni.homeworkproject.dao.AccountJpaRepository;
+import com.toni.homeworkproject.domain.Customer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.toni.homeworkproject.dao.DefaultDao;
 import com.toni.homeworkproject.domain.Account;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,46 +12,51 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class InMemoAccountService implements DefaultService<Account> {
-    private final DefaultDao<Account> accountDao;
+    private final AccountJpaRepository accountRepository;
 
+    @Transactional(readOnly = true)
     @Override
     public List<Account> findAll() {
-        return accountDao.findAll();
+        return accountRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<Account> findById(Long id) {
-        return accountDao.findById(id);
+        return accountRepository.findById(id);
     }
-
-
+    @Transactional
     @Override
     public Account create(Account obj) {
-        return accountDao.create(obj);
+        return accountRepository.save(obj);
     }
-
+    @Transactional
     @Override
     public void createAll(List<Account> entities) {
-        accountDao.createAll(entities);
+        accountRepository.saveAll(entities);
     }
 
+    @Transactional
     @Override
     public Account update(Account obj) {
-        return accountDao.update(obj);
+        return accountRepository.save(obj);
     }
 
+    @Transactional
     @Override
-    public boolean delete(Long id) {
-        return accountDao.delete(id);
+    public void delete(Long id) {
+        accountRepository.deleteById(id);
     }
 
+    @Transactional
     @Override
-    public boolean delete(Account obj) {
-        return accountDao.delete(obj);
+    public void delete(Account obj) {
+        accountRepository.delete(obj);
     }
 
+    @Transactional
     @Override
     public void deleteAll(List<Account> entities) {
-        accountDao.deleteAll(entities);
+        accountRepository.deleteAll(entities);
     }
 }

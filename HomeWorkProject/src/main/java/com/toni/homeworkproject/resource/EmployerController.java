@@ -29,6 +29,6 @@ public class EmployerController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable(name = "id") Long id){
-        return ResponseEntity.ok(empService.delete(id));
+        return ResponseEntity.status(204).build();
     }
 }

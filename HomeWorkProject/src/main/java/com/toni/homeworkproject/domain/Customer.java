@@ -28,6 +28,12 @@ public class Customer extends AbstractEntity{
     @Column(name = "age")
     private Integer age;
 
+    @Column(name = "password")
+    private String password;
+
+    @Column(name = "phone")
+    private String phone;
+
     @JsonManagedReference
     @OneToMany(mappedBy = "customer",cascade = {CascadeType.ALL})
     private Set<Account> accounts;
@@ -41,11 +47,12 @@ public class Customer extends AbstractEntity{
     )
     private List<Employer> employers;
 
-    public Customer(String name, String surname, String email, Integer age) {
+    public Customer(String name, String surname, String email, Integer age, String password) {
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.age = age;
+        this.password = password;
         this.accounts = new HashSet<>();
     }
 

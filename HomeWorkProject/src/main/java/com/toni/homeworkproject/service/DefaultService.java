@@ -9,8 +9,8 @@ public interface DefaultService<T> {
     T create(T obj);
     void createAll(List<T> entities);
     T update(T obj);
-    boolean delete(Long id);
-    boolean delete(T obj);
+    void delete(Long id);
+    void delete(T obj);
     void deleteAll(List<T> entities);
 
     default T findByNum() {

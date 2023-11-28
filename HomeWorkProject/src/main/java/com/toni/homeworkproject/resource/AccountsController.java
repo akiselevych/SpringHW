@@ -1,7 +1,12 @@
 package com.toni.homeworkproject.resource;
 
 import com.toni.homeworkproject.domain.Account;
+import com.toni.homeworkproject.domain.Currency;
+import com.toni.homeworkproject.domain.Customer;
+import com.toni.homeworkproject.facade.account.AccountRequestMapper;
+import com.toni.homeworkproject.facade.account.AccountResponseMapper;
 import com.toni.homeworkproject.service.DefaultService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,13 +27,31 @@ import java.util.Optional;
                 RequestMethod.POST
         })
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/accounts")
 public class AccountsController {
     private final DefaultService<Account> accountService;
+    private final DefaultService<Customer> customerService;
+    private final AccountRequestMapper requestAccountMapper;
+    private final AccountResponseMapper responseAccountMapper;
 
-    public AccountsController(DefaultService<Account> accountService) {
-        this.accountService = accountService;
+    @PostMapping("/{id}/accounts")
+    public ResponseEntity<?> createAccount(@PathVariable(name = "id") Long id, @RequestBody Currency currency){
+        Optional<Customer> customer = customerService.findById(id);
+        if (customer.isPresent()){
+            Account newAccount = accountService.create(new Account(currency,customer.get()));
+            return ResponseEntity.status(201).body(responseAccountMapper.convertToDto(newAccount));
+        } else {
+            return ResponseEntity.status(404).body("No such customer with this ID");
+        }
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteAccount(@PathVariable(name = "id") Long id){
+        accountService.delete(id);
+        return ResponseEntity.status(204).build();
+    }
+
 
     @PostMapping("/replenish/{accountNumber}/{sum}")
     public ResponseEntity<?> replenishAccount(@PathVariable(name = "accountNumber") String accountNumber, @PathVariable(name = "sum") BigDecimal sum) {
