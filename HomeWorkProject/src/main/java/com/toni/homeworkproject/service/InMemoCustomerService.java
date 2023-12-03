@@ -3,6 +3,10 @@ package com.toni.homeworkproject.service;
 import com.toni.homeworkproject.dao.CustomerJpaRepository;
 import com.toni.homeworkproject.domain.Customer;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,8 +20,19 @@ public class InMemoCustomerService implements DefaultService<Customer> {
 
     @Transactional(readOnly = true)
     @Override
+    public List<Customer> findAll(Sort sort) {
+        return customerRepository.findAll(sort);
+    }
+
+    @Override
     public List<Customer> findAll() {
         return customerRepository.findAll();
+    }
+
+    @Override
+    public List<Customer> findAll(int page,int quantity) {
+        Page<Customer> pageList = customerRepository.findAll(PageRequest.of(page, quantity, Sort.by("id").ascending()));
+        return pageList.toList();
     }
 
     @Transactional(readOnly = true)

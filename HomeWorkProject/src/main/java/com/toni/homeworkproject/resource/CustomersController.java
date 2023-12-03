@@ -1,22 +1,28 @@
 package com.toni.homeworkproject.resource;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.toni.homeworkproject.domain.Account;
 import com.toni.homeworkproject.domain.Currency;
 import com.toni.homeworkproject.domain.Customer;
 import com.toni.homeworkproject.domain.Employer;
 import com.toni.homeworkproject.domain.dtos.request.CustomerRequestDto;
-import com.toni.homeworkproject.facade.account.AccountRequestMapper;
-import com.toni.homeworkproject.facade.account.AccountResponseMapper;
+import com.toni.homeworkproject.domain.dtos.response.CustomerResponseDto;
+import com.toni.homeworkproject.domain.dtos.response.CustomerResponseDtoView;
 import com.toni.homeworkproject.facade.customer.CustomerRequestMapper;
 import com.toni.homeworkproject.facade.customer.CustomerResponseMapper;
 import com.toni.homeworkproject.service.DefaultService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,15 +39,29 @@ public class CustomersController {
     private final CustomerResponseMapper responseCustomerMapper;
     private final CustomerRequestMapper requestCustomerMapper;
 
+//    @GetMapping
+//    public ResponseEntity<?> findAll(){
+//        List<Customer> customers = customerService.findAll(Sort.by(Sort.Direction.ASC,"id"));
+//        List<CustomerResponseDto> customersResponse = customers.stream().map(responseCustomerMapper::convertToDto).toList();
+//        return ResponseEntity.ok().body(customersResponse);
+//    }
+
     @GetMapping
-    public ResponseEntity<?> findAll(){
-        return ResponseEntity.ok().body(customerService.findAll().stream().map(responseCustomerMapper::convertToDto).toList());
+    @JsonView(CustomerResponseDtoView.Many.class)
+    public ResponseEntity<?> findAll(@RequestParam(name = "page") Integer page,
+                                     @RequestParam(name = "quantity",required = false) Integer quantity){
+        List<Customer> customers = customerService.findAll(page,quantity == null ? 10 : quantity);
+        List<CustomerResponseDto> customersResponse = customers.stream().map(responseCustomerMapper::convertToDto).toList();
+        return ResponseEntity.ok().body(customersResponse);
     }
+
     @GetMapping("/{id}")
+    @JsonView(CustomerResponseDtoView.Single.class)
     public ResponseEntity<?> findById(@PathVariable(name = "id") Long id){
         Optional<Customer> customerOptional = customerService.findById(id);
         if (customerOptional.isPresent()){
-            return ResponseEntity.ok(responseCustomerMapper.convertToDto(customerOptional.get()));
+            CustomerResponseDto res = responseCustomerMapper.convertToDto(customerOptional.get());
+            return ResponseEntity.ok().body(res);
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -68,9 +88,20 @@ public class CustomersController {
         }
     }
 
-    @PutMapping
-    public ResponseEntity<?> update(@RequestBody Customer customer){
-        return ResponseEntity.ok().body(responseCustomerMapper.convertToDto(customerService.update(customer)));
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable(name = "id") Long id, @RequestBody Map<Object,Object> fields){
+        Optional<Customer> customerOptional = customerService.findById(id);
+        if (customerOptional.isPresent()){
+            fields.forEach((key, value) -> {
+                Field field = ReflectionUtils.findField(Customer.class, (String) key);
+                if (field != null) {
+                    field.setAccessible(true);
+                    ReflectionUtils.setField(field, customerOptional.get(), value);
+                }
+            });
+            return ResponseEntity.ok().body(responseCustomerMapper.convertToDto(customerService.update(customerOptional.get())));
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Customer not found");
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable(name = "id") Long id){

@@ -7,6 +7,7 @@ import com.toni.homeworkproject.facade.account.AccountRequestMapper;
 import com.toni.homeworkproject.facade.account.AccountResponseMapper;
 import com.toni.homeworkproject.service.DefaultService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,7 +56,7 @@ public class AccountsController {
 
     @PostMapping("/replenish/{accountNumber}/{sum}")
     public ResponseEntity<?> replenishAccount(@PathVariable(name = "accountNumber") String accountNumber, @PathVariable(name = "sum") BigDecimal sum) {
-        Optional<Account> accountOptional = accountService.findAll().stream()
+        Optional<Account> accountOptional = accountService.findAll(Sort.by(Sort.Direction.ASC,"id")).stream()
                 .filter(acc -> acc.getAccountNumber().equals(accountNumber)).findAny();
         if (sum.compareTo(BigDecimal.valueOf(0)) < 0) {
             return ResponseEntity.badRequest().body("Sum must be more than 0");
@@ -72,7 +73,7 @@ public class AccountsController {
     @PostMapping("/withdraw/{accountNumber}/{sum}")
     public ResponseEntity<?> withdrawAccount(@PathVariable(name = "accountNumber") String accountNumber,
                                              @PathVariable(name = "sum") BigDecimal sum) {
-        Optional<Account> accountOptional = accountService.findAll().stream()
+        Optional<Account> accountOptional = accountService.findAll(Sort.by(Sort.Direction.ASC,"id")).stream()
                 .filter(acc -> acc.getAccountNumber().equals(accountNumber)).findAny();
         if (sum.compareTo(BigDecimal.valueOf(0)) < 0) {
             return ResponseEntity.badRequest().body("Sum must be more than 0");
@@ -93,7 +94,7 @@ public class AccountsController {
     public ResponseEntity<?> sendToAnotherAccount(@PathVariable(name = "senderAccNo") String senderAccNumber,
                                                   @PathVariable(name = "receiverAccNo") String receiverAccNumber,
                                                   @PathVariable(name = "sum") BigDecimal sum) {
-        List<Account> accounts = accountService.findAll();
+        List<Account> accounts = accountService.findAll(Sort.by(Sort.Direction.ASC,"id"));
         Optional<Account> senderOptional = accounts.stream().filter(acc -> acc.getAccountNumber().equals(senderAccNumber)).findAny();
         Optional<Account> receiverOptional = accounts.stream().filter(acc -> acc.getAccountNumber().equals(receiverAccNumber)).findAny();
         if (sum.compareTo(BigDecimal.valueOf(0)) < 0) {

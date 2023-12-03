@@ -1,7 +1,12 @@
 package com.toni.homeworkproject.service;
 import com.toni.homeworkproject.dao.AccountJpaRepository;
 import com.toni.homeworkproject.domain.Customer;
+import com.toni.homeworkproject.domain.Employer;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import com.toni.homeworkproject.domain.Account;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,8 +21,19 @@ public class InMemoAccountService implements DefaultService<Account> {
 
     @Transactional(readOnly = true)
     @Override
+    public List<Account> findAll(Sort sort) {
+        return accountRepository.findAll(sort);
+    }
+
+    @Override
     public List<Account> findAll() {
         return accountRepository.findAll();
+    }
+
+    @Override
+    public List<Account> findAll(int page,int quantity) {
+        Page<Account> pageList = accountRepository.findAll(PageRequest.of(page, quantity));
+        return pageList.toList();
     }
 
     @Transactional(readOnly = true)

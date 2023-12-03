@@ -4,6 +4,10 @@ import com.toni.homeworkproject.dao.EmployerJpaRepository;
 import com.toni.homeworkproject.domain.Account;
 import com.toni.homeworkproject.domain.Employer;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,8 +21,21 @@ public class InMemoEmployerService implements DefaultService<Employer> {
 
     @Transactional(readOnly = true)
     @Override
+    public List<Employer> findAll(Sort sort) {
+        return employerRepository.findAll(sort);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
     public List<Employer> findAll() {
-        return employerRepository.findAll();
+         return employerRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Employer> findAll(int page,int quantity) {
+        Page<Employer> pageList = employerRepository.findAll(PageRequest.of(page, quantity));
+        return pageList.toList();
     }
 
     @Transactional(readOnly = true)

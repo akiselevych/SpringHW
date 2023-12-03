@@ -1,5 +1,6 @@
 package com.toni.homeworkproject.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,8 +18,15 @@ import java.util.Set;
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id", callSuper = true)
 @NamedEntityGraph(name = "customerWithAccountsAndEmployers",
-        attributeNodes = {@NamedAttributeNode("accounts"), @NamedAttributeNode("employers")})
-public class Customer extends AbstractEntity{
+        attributeNodes = {
+                @NamedAttributeNode("accounts"),
+                @NamedAttributeNode(value = "employers", subgraph = "employers")
+        },
+        subgraphs = {
+                @NamedSubgraph(name = "employers", attributeNodes = {@NamedAttributeNode("customers")})
+        }
+)
+public class Customer extends AbstractEntity {
     @Column(name = "name")
     private String name;
     @Column(name = "surname")
@@ -35,7 +43,7 @@ public class Customer extends AbstractEntity{
     private String phone;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "customer",cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "customer", cascade = {CascadeType.ALL})
     private Set<Account> accounts;
 
 

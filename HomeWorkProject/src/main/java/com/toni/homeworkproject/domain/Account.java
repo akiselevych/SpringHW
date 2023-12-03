@@ -25,7 +25,7 @@ public class Account extends AbstractEntity {
     private BigDecimal balance;
 
     @JsonBackReference
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Customer customer;
 
     public Account(Currency currency, Customer customer) {

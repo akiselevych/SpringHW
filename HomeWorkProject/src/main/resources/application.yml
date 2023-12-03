@@ -16,6 +16,9 @@ spring:
     active: local
 ---
 spring:
+  jackson:
+    mapper:
+      default-view-inclusion: true
   flyway:
     enabled: true
   sql:
@@ -28,7 +31,7 @@ spring:
     driver-class-name: org.h2.Driver
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
-    defer-datasource-initialization: false
+    defer-datasource-initialization: true
     show-sql: true
     hibernate:
       id:
@@ -39,6 +42,9 @@ spring:
       on-profile: local
 ---
 spring:
+  jackson:
+    mapper:
+      default-view-inclusion: true
   flyway:
     enabled: false
   datasource:
