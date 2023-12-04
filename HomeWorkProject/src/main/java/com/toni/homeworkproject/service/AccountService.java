@@ -1,11 +1,8 @@
 package com.toni.homeworkproject.service;
 import com.toni.homeworkproject.dao.AccountJpaRepository;
-import com.toni.homeworkproject.domain.Customer;
-import com.toni.homeworkproject.domain.Employer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import com.toni.homeworkproject.domain.Account;
@@ -16,7 +13,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class InMemoAccountService implements DefaultService<Account> {
+public class AccountService implements DefaultService<Account> {
     private final AccountJpaRepository accountRepository;
 
     @Transactional(readOnly = true)

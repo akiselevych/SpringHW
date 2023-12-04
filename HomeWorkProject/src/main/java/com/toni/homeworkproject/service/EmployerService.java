@@ -1,12 +1,10 @@
 package com.toni.homeworkproject.service;
 
 import com.toni.homeworkproject.dao.EmployerJpaRepository;
-import com.toni.homeworkproject.domain.Account;
 import com.toni.homeworkproject.domain.Employer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +14,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class InMemoEmployerService implements DefaultService<Employer> {
+public class EmployerService implements DefaultService<Employer> {
     private final EmployerJpaRepository employerRepository;
 
     @Transactional(readOnly = true)
