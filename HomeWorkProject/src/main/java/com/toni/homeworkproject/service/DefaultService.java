@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface DefaultService<T> {
     List<T> findAll(Sort sort);
     List<T> findAll();
-    List<T> findAll(int page,int quantity);
+    List<T> findAll(Integer page,Integer quantity);
 
     Optional<T> findById(Long id);
     T create(T obj);

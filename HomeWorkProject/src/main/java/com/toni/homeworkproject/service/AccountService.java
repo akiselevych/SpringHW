@@ -28,7 +28,7 @@ public class AccountService implements DefaultService<Account> {
     }
 
     @Override
-    public List<Account> findAll(int page,int quantity) {
+    public List<Account> findAll(Integer page,Integer quantity) {
         Page<Account> pageList = accountRepository.findAll(PageRequest.of(page, quantity));
         return pageList.toList();
     }

@@ -29,7 +29,7 @@ public class CustomerService implements DefaultService<Customer> {
     }
 
     @Override
-    public List<Customer> findAll(int page,int quantity) {
+    public List<Customer> findAll(Integer page,Integer quantity) {
         Page<Customer> pageList = customerRepository.findAll(PageRequest.of(page, quantity, Sort.by("id").ascending()));
         return pageList.toList();
     }

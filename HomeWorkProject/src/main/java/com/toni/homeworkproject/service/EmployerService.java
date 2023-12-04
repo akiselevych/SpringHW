@@ -31,7 +31,7 @@ public class EmployerService implements DefaultService<Employer> {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Employer> findAll(int page,int quantity) {
+    public List<Employer> findAll(Integer page,Integer quantity) {
         Page<Employer> pageList = employerRepository.findAll(PageRequest.of(page, quantity));
         return pageList.toList();
     }
