@@ -1,6 +1,7 @@
 package com.toni.homeworkproject.facade.customer;
 
 import com.toni.homeworkproject.domain.Customer;
+import com.toni.homeworkproject.domain.Role;
 import com.toni.homeworkproject.domain.dtos.request.CustomerRequestDto;
 import com.toni.homeworkproject.domain.dtos.response.CustomerResponseDto;
 import com.toni.homeworkproject.facade.DtoMapperFacade;
@@ -31,6 +32,11 @@ public class CustomerResponseMapper extends DtoMapperFacade<Customer, CustomerRe
         }
         if (entity.getAccounts() == null){
             dto.setAccounts(Set.of());
+        }
+        if (entity.getRoles() == null){
+            dto.setRoles(Set.of());
+        } else {
+            dto.setRoles(entity.getRoles().stream().map(Role::getRoleName).collect(Collectors.toSet()));
         }
     }
 }

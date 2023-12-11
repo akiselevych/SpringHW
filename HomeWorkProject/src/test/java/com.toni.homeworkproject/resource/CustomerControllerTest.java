@@ -180,9 +180,11 @@ public class CustomerControllerTest {
 
     @Test
     public void findCustomerByNotExistingId() throws Exception {
-        when(customerService.findById(4L)).thenReturn(Optional.ofNullable(null));
+        when(customerService.findById(4L)).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/customers/4").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
+
+
 }

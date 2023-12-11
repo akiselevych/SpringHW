@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @SpringBootApplication
 @EnableTransactionManagement
-//@EnableJpaAuditing
+@EnableJpaAuditing
 public class HomeWorkProjectApplication implements ApplicationRunner {
 
 	public static void main(String[] args) {

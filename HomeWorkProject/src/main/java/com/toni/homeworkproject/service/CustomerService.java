@@ -1,7 +1,9 @@
 package com.toni.homeworkproject.service;
 
 import com.toni.homeworkproject.dao.CustomerJpaRepository;
+import com.toni.homeworkproject.dao.RoleRepository;
 import com.toni.homeworkproject.domain.Customer;
+import com.toni.homeworkproject.domain.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,11 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class CustomerService implements DefaultService<Customer> {
     private final CustomerJpaRepository customerRepository;
+    private final RoleRepository roleRepository;
 
     @Transactional(readOnly = true)
     @Override
@@ -34,11 +38,15 @@ public class CustomerService implements DefaultService<Customer> {
         return pageList.toList();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     @Override
     public Optional<Customer> findById(Long id) {
         return customerRepository.findById(id);
     }
+
+    @Transactional(readOnly = true)
+    public Optional<Customer> findCustomerByEmail(String email){ return customerRepository.findCustomerByEmail(email); }
+
     @Transactional
     @Override
     public Customer create(Customer obj) {
@@ -73,4 +81,5 @@ public class CustomerService implements DefaultService<Customer> {
     public void deleteAll(List<Customer> entities) {
         customerRepository.deleteAll(entities);
     }
+
 }

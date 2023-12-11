@@ -20,10 +20,12 @@ import java.util.Set;
 @NamedEntityGraph(name = "customerWithAccountsAndEmployers",
         attributeNodes = {
                 @NamedAttributeNode("accounts"),
-                @NamedAttributeNode(value = "employers", subgraph = "employers")
+                @NamedAttributeNode(value = "employers", subgraph = "employers"),
+                @NamedAttributeNode(value = "roles",subgraph = "roles")
         },
         subgraphs = {
-                @NamedSubgraph(name = "employers", attributeNodes = {@NamedAttributeNode("customers")})
+                @NamedSubgraph(name = "employers", attributeNodes = {@NamedAttributeNode("customers")}),
+                @NamedSubgraph(name = "roles", attributeNodes = {@NamedAttributeNode("customers")})
         }
 )
 public class Customer extends AbstractEntity {
@@ -55,13 +57,23 @@ public class Customer extends AbstractEntity {
     )
     private List<Employer> employers;
 
-    public Customer(String name, String surname, String email, Integer age, String password) {
+    @ManyToMany
+    @JoinTable(
+            name = "customers_roles",
+            joinColumns = @JoinColumn(name = "customer_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
+    )
+    @JsonManagedReference
+    private Set<Role> roles;
+
+    public Customer(String name, String surname, String email, Integer age, String password, Set<Role> roles) {
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.age = age;
         this.password = password;
         this.accounts = new HashSet<>();
+        this.roles = roles;
     }
 
 }

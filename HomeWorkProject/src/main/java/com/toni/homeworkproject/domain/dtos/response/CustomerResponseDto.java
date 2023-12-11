@@ -33,6 +33,9 @@ public class CustomerResponseDto {
     @JsonView(CustomerResponseDtoView.Single.class)
     private String phone;
 
+    @JsonView({CustomerResponseDtoView.Single.class, CustomerResponseDtoView.Many.class})
+    private Set<String> roles;
+
     @JsonView(CustomerResponseDtoView.Single.class)
     private Date createdDate;
     @JsonView(CustomerResponseDtoView.Single.class)
