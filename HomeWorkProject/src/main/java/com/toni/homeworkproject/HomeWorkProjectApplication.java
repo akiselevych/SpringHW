@@ -1,6 +1,10 @@
 package com.toni.homeworkproject;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -9,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
@@ -29,7 +34,13 @@ public class HomeWorkProjectApplication implements ApplicationRunner {
 
 	@Bean
 	public OpenAPI springShopOpenApi(){
-		return new OpenAPI();
+		return new OpenAPI()
+				.components(new Components().addSecuritySchemes("bearer-jwt",
+						new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")
+								.in(SecurityScheme.In.HEADER).name("Authorization")))
+				.info(new Info().title("App API").version("snapshot"))
+				.addSecurityItem(
+						new SecurityRequirement().addList("bearer-jwt", Arrays.asList("read", "write")));
 	}
 
 }
