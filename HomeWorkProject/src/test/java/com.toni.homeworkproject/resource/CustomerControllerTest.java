@@ -1,21 +1,38 @@
 package com.toni.homeworkproject.resource;
 
+import com.toni.homeworkproject.auth.JwtFilter;
+import com.toni.homeworkproject.auth.JwtProvider;
 import com.toni.homeworkproject.domain.Account;
 import com.toni.homeworkproject.domain.Customer;
 import com.toni.homeworkproject.domain.Employer;
+import com.toni.homeworkproject.domain.dtos.request.JwtRequestDto;
 import com.toni.homeworkproject.domain.dtos.response.CustomerResponseDto;
+import com.toni.homeworkproject.domain.dtos.response.JwtResponseDto;
 import com.toni.homeworkproject.facade.customer.CustomerRequestMapper;
 import com.toni.homeworkproject.facade.customer.CustomerResponseMapper;
+import com.toni.homeworkproject.service.AuthService;
+import jakarta.security.auth.message.AuthException;
+import lombok.NonNull;
+import lombok.With;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.test.context.support.WithMockUser;
 import com.toni.homeworkproject.service.CustomerService;
 import com.toni.homeworkproject.service.DefaultService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.auditing.AuditingHandler;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -29,10 +46,17 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CustomersController.class)
+@WithUserDetails("user")
 public class CustomerControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private JwtFilter jwtFilter;
+
+    @MockBean
+    private JwtProvider jwtProvider;
 
     @MockBean
     private DefaultService<Customer> customerService;
@@ -48,6 +72,8 @@ public class CustomerControllerTest {
 
     @Test
     public void findAllPageableAndSortableWithQuantityTest() throws Exception {
+
+
         Customer customer = new Customer();
         customer.setId(1L);
         Customer customer2 = new Customer();
@@ -76,13 +102,15 @@ public class CustomerControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/customers").contentType(MediaType.APPLICATION_JSON)
                         .param("page","0")
-                        .param("quantity", "4"))
+                        .param("quantity", "4")
+                )
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].id", Matchers.is(1)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].id", Matchers.is(2)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].id", Matchers.is(3)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[3].id", Matchers.is(5)));
     }
+
 
     @Test
     public void findAllPageableAndSortableWithoutQuantityTest() throws Exception {

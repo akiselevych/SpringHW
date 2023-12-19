@@ -12,6 +12,8 @@ CREATE TABLE Customers (
 );
 
 
+
+
 CREATE TABLE Accounts (
                          id BIGINT AUTO_INCREMENT PRIMARY KEY,
                          account_number VARCHAR(255) NOT NULL,
@@ -31,16 +33,41 @@ CREATE TABLE Employers (
                            last_modified_date TIMESTAMP  NULL
 );
 
+CREATE TABLE Roles (
+                       id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                       creation_date DATE,
+                       last_modified_date DATE,
+                       role_name VARCHAR(255)
+);
+
+
+
 CREATE TABLE Customers_Employers (
                                      id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                      customer_id BIGINT,
                                      employer_id BIGINT
 );
+CREATE TABLE Customers_Roles (
+                                     id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                     customer_id BIGINT,
+                                     role_id BIGINT
+);
 
 
 
-INSERT INTO Customers (name, surname,password, email, age,phone) VALUES ('Anton', 'Kiselevych','123','email@example.com', 25,'0995286624');
-INSERT INTO Customers (name, surname,password, email, age,phone) VALUES ('Polina', 'Kyslytska', '000','polina@example.com', 21,'0914503291');
+INSERT INTO customers (name, surname, email, age, password, phone) VALUES ('Anton', 'Kiselevych', 'anton@example.com', 30, 'anton', '380975286903');
+INSERT INTO customers (name, surname, email, age, password, phone) VALUES ('Polina', 'Kiselevych', 'polina@example.com', 22, 'polina', '380975286233');
+INSERT INTO customers (name, surname, email, age, password, phone) VALUES ('Andrew', 'Kirilenko', 'andrew@example.com', 22, 'andrew', '380555212233');
 
 
-INSERT INTO Accounts (account_number, currency, balance, customer_id) VALUES (UUID(), 'USD', 0.0, 1);
+
+INSERT INTO accounts (account_number, currency, balance, customer_id) VALUES (UUID(), 'USD', 0.0, 1);
+INSERT INTO accounts (account_number, currency, balance, customer_id) VALUES (UUID(), 'EUR', 0.0, 2);
+
+INSERT INTO employers (name, address) VALUES ('Employer Inc.', '123 Main St');
+
+INSERT INTO roles (role_name) VALUES ('USER');
+INSERT INTO roles (role_name) VALUES ('ADMIN');
+
+
+

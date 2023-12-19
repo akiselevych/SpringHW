@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 
 @SpringBootApplication
 @EnableTransactionManagement
-@EnableJpaAuditing
 public class HomeWorkProjectApplication implements ApplicationRunner {
 
 	public static void main(String[] args) {
@@ -31,16 +30,4 @@ public class HomeWorkProjectApplication implements ApplicationRunner {
 	public void run(ApplicationArguments args) throws Exception {
 		System.out.println("http://localhost:9000/swagger-ui/index.html \n");
 	}
-
-	@Bean
-	public OpenAPI springShopOpenApi(){
-		return new OpenAPI()
-				.components(new Components().addSecuritySchemes("bearer-jwt",
-						new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")
-								.in(SecurityScheme.In.HEADER).name("Authorization")))
-				.info(new Info().title("App API").version("snapshot"))
-				.addSecurityItem(
-						new SecurityRequirement().addList("bearer-jwt", Arrays.asList("read", "write")));
-	}
-
 }

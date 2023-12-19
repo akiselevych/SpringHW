@@ -9,6 +9,7 @@ import io.jsonwebtoken.Claims;
 import jakarta.security.auth.message.AuthException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,8 +21,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
 
-    public JwtResponseDto login(@NonNull JwtRequestDto request) throws AuthException {
-        final Customer customer = customerService.findById(6L).orElseThrow(() -> new UsernameNotFoundException("Customer not found"));
+    public JwtResponseDto login(JwtRequestDto request) throws AuthException {
+        final Customer customer = customerService.findCustomerByEmail(request.getLogin()).orElseThrow(() -> new UsernameNotFoundException("Customer not found"));
         if (customer.getPassword().equals(request.getPassword())){
             String access = jwtProvider.generateAccessToken(customer);
             String refresh = jwtProvider.generateRefreshToken(customer);
