@@ -13,6 +13,7 @@ import com.toni.homeworkproject.facade.customer.CustomerResponseMapper;
 import com.toni.homeworkproject.service.DefaultService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -31,6 +32,7 @@ import java.util.Optional;
 @CrossOrigin(origins = "https://client-for-java.vercel.app", allowCredentials = "true")
 @RestController
 @RequestMapping("/customers")
+@Slf4j
 @RequiredArgsConstructor
 public class CustomersController {
     private final DefaultService<Customer> customerService;
@@ -52,12 +54,14 @@ public class CustomersController {
                                      @RequestParam(name = "quantity",required = false) Integer quantity){
         List<Customer> customers = customerService.findAll(page,quantity == null ? 10 : quantity);
         List<CustomerResponseDto> customersResponse = customers.stream().map(responseCustomerMapper::convertToDto).toList();
+        log.info("find all method");
         return ResponseEntity.ok().body(customersResponse);
     }
 
     @GetMapping("/{id}")
     @JsonView(CustomerResponseDtoView.Single.class)
     public ResponseEntity<?> findById(@PathVariable(name = "id") Long id){
+        log.info("Find by ID method");
         Optional<Customer> customerOptional = customerService.findById(id);
         if (customerOptional.isPresent()){
             CustomerResponseDto res = responseCustomerMapper.convertToDto(customerOptional.get());
@@ -68,6 +72,7 @@ public class CustomersController {
     }
     @PostMapping
     public ResponseEntity<?> create(@RequestBody @Valid CustomerRequestDto customerDto){
+        log.info("User created");
         Customer newCustomer = requestCustomerMapper.convertToEntity(customerDto);
         return ResponseEntity.ok(responseCustomerMapper.convertToDto(customerService.create(newCustomer)));
     }
@@ -77,6 +82,7 @@ public class CustomersController {
                                          @PathVariable(name = "employerId") Long employerId){
         Optional<Customer> customerOpt = customerService.findById(customerId);
         Optional<Employer> employerOpt = employerService.findById(employerId);
+        log.info("Employer was added");
         if (customerOpt.isPresent() && employerOpt.isPresent()){
             Customer customer = customerOpt.get();
             Employer employer = employerOpt.get();
@@ -91,6 +97,7 @@ public class CustomersController {
     @PatchMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable(name = "id") Long id, @RequestBody Map<Object,Object> fields){
         Optional<Customer> customerOptional = customerService.findById(id);
+        log.info("User updated");
         if (customerOptional.isPresent()){
             fields.forEach((key, value) -> {
                 Field field = ReflectionUtils.findField(Customer.class, (String) key);
@@ -105,6 +112,7 @@ public class CustomersController {
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable(name = "id") Long id){
+        log.info("User deleted");
         customerService.delete(id);
         return ResponseEntity.status(204).build();
     }
@@ -112,8 +120,10 @@ public class CustomersController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidationErrors(MethodArgumentNotValidException e){
         List<String> errors = e.getBindingResult().getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
+        log.warn(getErrorsMap(errors).toString());
         return ResponseEntity.status(400).body(getErrorsMap(errors));
     }
+
 
     private Map<String, List<String>> getErrorsMap(List<String> errors) {
         Map<String, List<String>> errorResponse = new HashMap<>();

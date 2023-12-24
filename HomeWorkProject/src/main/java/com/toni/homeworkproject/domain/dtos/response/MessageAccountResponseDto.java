@@ -1,6 +1,6 @@
 package com.toni.homeworkproject.domain.dtos.response;
 
-import com.fasterxml.jackson.annotation.JsonView;
+import com.toni.homeworkproject.domain.AccountMessageType;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -10,10 +10,10 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = "customer")
-@JsonView({CustomerResponseDtoView.Single.class, CustomerResponseDtoView.Many.class})
-public class AccountResponseDto {
+public class MessageAccountResponseDto {
     private Long id;
     private String accountNumber;
     private CustomerResponseDto customer;
     private BigDecimal balance;
+    private AccountMessageType type;
 }

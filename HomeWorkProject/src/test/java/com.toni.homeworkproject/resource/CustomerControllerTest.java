@@ -46,7 +46,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CustomersController.class)
-@WithUserDetails("user")
 public class CustomerControllerTest {
 
     @Autowired
@@ -71,6 +70,7 @@ public class CustomerControllerTest {
 
 
     @Test
+    @WithMockUser("user")
     public void findAllPageableAndSortableWithQuantityTest() throws Exception {
 
 

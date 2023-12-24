@@ -17,7 +17,7 @@ spring:
 ---
 spring:
   profiles:
-    active: local
+    active: prod
 ---
 spring:
   jackson:

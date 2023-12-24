@@ -21,7 +21,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-@Component
+@Service
 @Slf4j
 public class JwtProvider {
     public static final int ACCESS_LEAVE_MINUTES = 10;
