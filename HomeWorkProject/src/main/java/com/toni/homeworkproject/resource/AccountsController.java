@@ -11,6 +11,7 @@ import com.toni.homeworkproject.facade.account.MessageAccountResponseMapper;
 import com.toni.homeworkproject.service.DefaultService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -23,7 +24,7 @@ import java.util.Optional;
 
 @CrossOrigin(
         origins = {
-                "https://client-for-java.vercel.app"
+                "http://localhost:5173"
         },
         methods = {
                 RequestMethod.OPTIONS,
@@ -42,8 +43,7 @@ public class AccountsController {
     private final AccountRequestMapper requestAccountMapper;
     private final AccountResponseMapper responseAccountMapper;
     private final MessageAccountResponseMapper messageAccountMapper;
-
-    private SimpMessagingTemplate messagingTemplate;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @PostMapping("/{id}/accounts")
     public ResponseEntity<?> createAccount(@PathVariable(name = "id") Long id, @RequestBody Currency currency) {
@@ -91,9 +91,8 @@ public class AccountsController {
         log.info("Account " + accountNumber + "replenished");
 
 
-        MessageAccountResponseDto response = messageAccountMapper.convertToDto(account);
-        response.setType(AccountMessageType.UPDATE);
-        messagingTemplate.convertAndSend("/topic/accounts", List.of(response));
+
+        messagingTemplate.convertAndSend("/topic/accounts", List.of(account));
 
         return ResponseEntity.ok().build();
     }
@@ -160,9 +159,9 @@ public class AccountsController {
         return ResponseEntity.ok().build();
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleExceptions(Exception e) {
-        log.warn(e.getMessage());
-        return ResponseEntity.status(400).body(e.getMessage());
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<?> handleExceptions(Exception e) {
+//        log.warn(e.getMessage());
+//        return ResponseEntity.status(400).body(e.getMessage());
+//    }
 }

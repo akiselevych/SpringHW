@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@CrossOrigin(origins = "https://client-for-java.vercel.app", allowCredentials = "true")
+@CrossOrigin
 @RestController
 @RequestMapping("/customers")
 @Slf4j

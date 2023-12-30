@@ -11,4 +11,9 @@ public class MessageAccountResponseMapper extends DtoMapperFacade<Account, Messa
     public MessageAccountResponseMapper() {
         super(Account.class, MessageAccountResponseDto.class);
     }
+
+    @Override
+    protected void decorateDto(MessageAccountResponseDto dto, Account entity) {
+
+    }
 }

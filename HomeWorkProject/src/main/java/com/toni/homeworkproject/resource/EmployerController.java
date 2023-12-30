@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/employers")
+@RequestMapping("http://localhost:5173")
 @RequiredArgsConstructor
 @Slf4j
 public class EmployerController {
