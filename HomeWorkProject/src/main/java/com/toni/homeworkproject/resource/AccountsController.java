@@ -159,9 +159,9 @@ public class AccountsController {
         return ResponseEntity.ok().build();
     }
 
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<?> handleExceptions(Exception e) {
-//        log.warn(e.getMessage());
-//        return ResponseEntity.status(400).body(e.getMessage());
-//    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> handleExceptions(Exception e) {
+        log.warn(e.getMessage());
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
 }
